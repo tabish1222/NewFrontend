@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// ✅ Helper to decode JWT payload
+function decodeToken(token) {
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
+  } catch (err) {
+    console.error("Invalid token:", err);
+    return null;
+  }
+}
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,18 +35,21 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ Save token in localStorage
+        // ✅ Save token
         localStorage.setItem("token", data.token);
+
+        // ✅ Decode role from token
+        const decoded = decodeToken(data.token);
+        console.log("Decoded JWT:", decoded);
 
         alert("Login successful ✅");
 
-        // ✅ Check user role and redirect accordingly
-        if (data.role === "teacher") {
+        if (decoded?.role === "teacher") {
           navigate("/teachers");
-        } else if (data.role === "parent") {
+        } else if (decoded?.role === "parent") {
           navigate("/students");
         } else {
-          alert("Unknown role, redirecting to login ❌");
+          alert("Unknown role ❌");
           navigate("/login");
         }
       } else {
