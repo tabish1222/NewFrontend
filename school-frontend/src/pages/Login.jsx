@@ -29,8 +29,15 @@ function Login() {
 
         alert("Login successful ✅");
 
-        // Redirect user after login
-        navigate("/students");
+        // ✅ Check user role and redirect accordingly
+        if (data.role === "teacher") {
+          navigate("/teachers");
+        } else if (data.role === "parent") {
+          navigate("/students");
+        } else {
+          alert("Unknown role, redirecting to login ❌");
+          navigate("/login");
+        }
       } else {
         alert(data.message || "Invalid credentials ❌");
       }
