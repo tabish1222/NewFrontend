@@ -1,119 +1,61 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+<form
+  onSubmit={handleLogin}
+  style={{
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    width: "300px",
+    textAlign: "center",
+  }}
+>
+  <h2>Login</h2>
 
-// ✅ Helper to decode JWT payload
-function decodeToken(token) {
-  try {
-    const payload = token.split(".")[1];
-    return JSON.parse(atob(payload));
-  } catch (err) {
-    console.error("Invalid token:", err);
-    return null;
-  }
-}
+  <div style={{ marginBottom: "10px" }}>
+    <input
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
+      style={{ width: "100%", padding: "8px" }}
+    />
+  </div>
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  <div style={{ marginBottom: "10px" }}>
+    <input
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+      style={{ width: "100%", padding: "8px" }}
+    />
+  </div>
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  <button
+    type="submit"
+    style={{
+      padding: "10px",
+      width: "100%",
+      background: "#4CAF50",
+      color: "white",
+      border: "none",
+      borderRadius: "5px",
+      cursor: "pointer",
+      marginBottom: "10px",
+    }}
+  >
+    Login
+  </button>
 
-    try {
-      const response = await fetch(
-        "https://backend-schoolapp.onrender.com/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // ✅ Save token
-        localStorage.setItem("token", data.token);
-
-        // ✅ Decode role from token
-        const decoded = decodeToken(data.token);
-        console.log("Decoded JWT:", decoded);
-
-        alert("Login successful ✅");
-
-        if (decoded?.role === "teacher") {
-          navigate("/teachers");
-        } else if (decoded?.role === "parent") {
-          navigate("/students");
-        } else {
-          alert("Unknown role ❌");
-          navigate("/login");
-        }
-      } else {
-        alert(data.message || "Invalid credentials ❌");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
-    }
-  };
-
-  return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
-      <form
-        onSubmit={handleLogin}
-        style={{
-          padding: "20px",
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          width: "300px",
-          textAlign: "center",
-        }}
-      >
-        <h2>Login</h2>
-
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-
-        <button
-          type="submit"
-          style={{
-            padding: "10px",
-            width: "100%",
-            background: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Login
-        </button>
-      </form>
-    </div>
-  );
-}
-
-export default Login;
+  {/* Inline Register link */}
+  <p>
+    Don’t have an account?{" "}
+    <span
+      style={{ color: "blue", cursor: "pointer" }}
+      onClick={() => navigate("/register")}
+    >
+      Register here
+    </span>
+  </p>
+</form>
